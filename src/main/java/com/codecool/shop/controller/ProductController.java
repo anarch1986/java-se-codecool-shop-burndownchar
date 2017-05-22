@@ -35,17 +35,19 @@ public class ProductController {
         }
         params.put("suppliers",supplierDataStore.getAll());
         params.put("categories",productCategoryDataStore.getAll());
-        params.put("category", productCategoryDataStore.find(1));
         params.put("products", productDataStore.getAll());
         params.put("quantity", orderDaoMem.getOrder().getTotalQuantity());
+        logger.debug("Suppliers, ProductCategories, Products are all rendered");
         return new ModelAndView(params, "product/index");
     }
 
     public static ModelAndView login(Request request,Response response){
+        logger.debug("login page rendered");
         return new ModelAndView(params,"product/login");
     }
 
     public static ModelAndView register(Request request,Response response){
+        logger.debug("registration page rendered");
         return new ModelAndView(params,"product/register");
     }
 
@@ -55,6 +57,7 @@ public class ProductController {
         session.save(user);
         session.getTransaction().commit();
         //Email.sendEmail("You registered! Nice!","Dear " + user.getName());
+        logger.debug("User registered with name: {}",request.queryParams("name"));
         return new ProductController().renderProducts(request,response);
     }
 
@@ -66,9 +69,10 @@ public class ProductController {
         List<User> users=(List<User>) query.getResultList();
         if (users.get(0).authenticate_user(request.queryParams("psw"))) {
             users.get(0).login(request);
+            logger.debug("user logged in successfully");
             return new ProductController().renderProducts(request,response);
         }
-        else System.out.println("Nope");
+        else logger.warn("could not log in user, wrong user name or password");
 
         return new ProductController().login(request,response);
     }
@@ -116,21 +120,21 @@ public class ProductController {
         int id = Integer.parseInt(req.params(":id"));
         Product product = productDaoMem.find(id);
         List < LineItem> itemList =orderDaoMem.getCurrentOrder();
-            for(LineItem items: itemList){
-                if(req.queryParams("id")
-                        .equals
-                   (Integer.toString(items.getId()))) {
-                    if(Integer.parseInt(req.queryParams("quantity"))<=0){
-                        orderDaoMem.deleteItem(items);
-                        logger.debug("Deleted item from cart with id of {}", items.getId());
-                        logger.info("hali");
-                    }
-                    else {
-                        items.setQuantity(Integer.parseInt(req.queryParams("quantity")));
-                        logger.debug("Edited quantity of item from cart with id of {} to new quantity of {}",items.getId(),req.queryParams("quantity"));
-                    }
+        for(LineItem items: itemList){
+            if(req.queryParams("id")
+                    .equals
+                            (Integer.toString(items.getId()))) {
+                if(Integer.parseInt(req.queryParams("quantity"))<=0){
+                    orderDaoMem.deleteItem(items);
+                    logger.debug("Deleted item from cart with id of {}", items.getId());
+                    logger.info("hali");
+                }
+                else {
+                    items.setQuantity(Integer.parseInt(req.queryParams("quantity")));
+                    logger.debug("Edited quantity of item from cart with id of {} to new quantity of {}",items.getId(),req.queryParams("quantity"));
                 }
             }
+        }
 
 
         return ProductController.renderCart(req,res);
@@ -141,6 +145,7 @@ public class ProductController {
         int searchedId = Integer.parseInt(req.params(":id"));
 
         params.put("products", productDataStore.getBy(productCategoryDataStore.find(searchedId)));
+        logger.debug("Products filtered for {}",productCategoryDataStore.find(searchedId).getName());
         return new ModelAndView(params, "product/index");
     }
 
@@ -148,6 +153,7 @@ public class ProductController {
         int searchedId = Integer.parseInt(req.params(":id"));
 
         params.put("products", productDataStore.getBy(supplierDataStore.find(searchedId)));
+        logger.debug("Products filtered for {}",supplierDataStore.find(searchedId).getName());
         return new ModelAndView(params, "product/index");
     }
 

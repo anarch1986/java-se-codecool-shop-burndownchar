@@ -1,16 +1,14 @@
 import static spark.Spark.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.codecool.shop.controller.*;
 import com.codecool.shop.dao.*;
 import com.codecool.shop.dao.implementation.*;
 import com.codecool.shop.model.ProductCategory;
 import com.codecool.shop.model.Supplier;
 import com.codecool.shop.model.Product;
-import com.codecool.shop.model.Order;
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
-import org.apache.log4j.SimpleLayout;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
@@ -21,14 +19,13 @@ import spark.Request;
 import spark.Response;
 import spark.template.thymeleaf.ThymeleafTemplateEngine;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
+import java.util.logging.Level;
 
 public class Main {
 
@@ -43,7 +40,10 @@ public class Main {
         System.setProperty("order",Integer.toString(OrderDaoMem.getInstance().getOrder().getId()));
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException {
+        logger.info("Logging started");
         readData();
 
 
