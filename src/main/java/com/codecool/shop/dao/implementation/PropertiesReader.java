@@ -3,9 +3,11 @@ package com.codecool.shop.dao.implementation;
 import java.io.*;
 import java.util.Properties;
 
+
 /**
- * Created by tomi on 2017.05.17..
+ * Reads and holds all data from a *.properties file. Used for making the database connections.
  */
+
 public class PropertiesReader  {
     public  String fileName;
     public static String user;
@@ -13,10 +15,18 @@ public class PropertiesReader  {
     public static String database;
     public static String db_url;
 
+    /**
+     *
+     * @param fileName a *.properties file. It contains all the necessary data for making a database connection.
+     */
     public PropertiesReader(String fileName) {
         this.fileName = fileName;
     }
 
+
+    /**
+     * Reads the file defined in the fileName field, and sets the instance's other fields from the file.
+     */
     public void readData() {
         try {
             Properties properties = new Properties();
@@ -31,8 +41,4 @@ public class PropertiesReader  {
         }
     }
 
-    public void hibernateXmlSetup(){
-
-
-    }
 }

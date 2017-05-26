@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by tomi on 2017.05.17..
+ * Database using implementation of the SupplierDao interface.
  */
 public class SupplierDaoJdbc implements SupplierDao {
 
@@ -31,6 +31,10 @@ public class SupplierDaoJdbc implements SupplierDao {
         SupplierDaoJdbc.propertiesReader = new PropertiesReader(fileName);
     }
 
+    /**
+     * Adds a row into the database's supplier table. The data for this row is coming from the parameter Supplier object.
+     * @param supplier Supplier object
+     */
     @Override
     public void add(Supplier supplier) {
         Connection connection = null;
@@ -57,6 +61,11 @@ public class SupplierDaoJdbc implements SupplierDao {
         }
     }
 
+    /**
+     * Finds a row by it's id (primary key) in the database's supplier table, and returns it as a Supplier object.
+     * @param id id primary key field in the supplier table
+     * @return Supplier object
+     */
     public Supplier find(int id) {
 
         Connection connection = null;
@@ -95,7 +104,10 @@ public class SupplierDaoJdbc implements SupplierDao {
 
     }
 
-
+    /**
+     * Returns all rows in the supplier table.
+     * @return List containing Supplier objects.
+     */
     public List<Supplier> getAll() {
         Connection connection = null;
         List<Supplier> supplierList = new ArrayList<>();
@@ -130,6 +142,10 @@ public class SupplierDaoJdbc implements SupplierDao {
         return supplierList;
     }
 
+    /**
+     * Removes a row from the supplier table. The row is specified by the id parameter which is a primary key in the table.
+     * @param id id primary key field in the supplier table
+     */
     public void remove(int id) {
 
         Connection connection = null;
@@ -153,6 +169,13 @@ public class SupplierDaoJdbc implements SupplierDao {
             }
         }
     }
+
+    /**
+     * Deletes all rows from the supplier table. It only used for testing on the dummy database.
+     * <p>Truncates the table and restarts it's primary key. Also it runs as cascaded,
+     * so it will delete all products associated with the suppliers.
+     * You should never-ever use it on the primary database! You have been warned!</p>
+     */
 
     public void removeAll() {
 
