@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by tomi on 2017.05.17..
+ * Database using implementation of the ProductCategoryDao interface.
  */
 public class ProductCategoryDaoJdbc implements ProductCategoryDao {
     private static ProductCategoryDaoJdbc instance = null;
@@ -27,6 +27,11 @@ public class ProductCategoryDaoJdbc implements ProductCategoryDao {
         ProductCategoryDaoJdbc.propertiesReader = new PropertiesReader(fileName);
     }
 
+    /**
+     * Adds a row into the database's productcategory table. The data for this row is coming from the parameter ProductCategory object.
+     *
+     * @param productCategory ProductCategory object
+     */
     @Override
     public void add(ProductCategory productCategory) {
         Connection connection = null;
@@ -52,6 +57,13 @@ public class ProductCategoryDaoJdbc implements ProductCategoryDao {
             }
         }
     }
+
+    /**
+     * Finds a row by it's id (primary key) in the database's productcategory table, and returns it as a ProductCategory object.
+     *
+     * @param id primary key field in the productcategory table
+     * @return ProductCategory object
+     */
 
     public ProductCategory find(int id) {
 
@@ -92,7 +104,11 @@ public class ProductCategoryDaoJdbc implements ProductCategoryDao {
 
     }
 
-
+    /**
+     * Returns all rows in the productcategory table.
+     *
+     * @return List containing ProductCategory objects.
+     */
     public List<ProductCategory> getAll() {
         Connection connection = null;
         List<ProductCategory> productCategories = new ArrayList<>();
@@ -128,6 +144,11 @@ public class ProductCategoryDaoJdbc implements ProductCategoryDao {
         return productCategories;
     }
 
+    /**
+     * Removes a row from the productcategory table. The row is specified by the id parameter which is a primary key in the table.
+     *
+     * @param id id primary key field in the productcategory table
+     */
     public void remove(int id) {
 
         Connection connection = null;
@@ -151,6 +172,13 @@ public class ProductCategoryDaoJdbc implements ProductCategoryDao {
             }
         }
     }
+
+    /**
+     * Deletes all rows from the productcategory table. It only used for testing on the dummy database.
+     * <p>Truncates the table and restarts it's primary key. Also it runs as cascaded,
+     * so it will delete all products associated with the productcategories.
+     * You should never-ever use it on the primary database! You have been warned!</p>
+     */
 
     public void removeAll() {
 

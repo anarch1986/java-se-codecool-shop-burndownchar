@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by tomi on 2017.05.17..
+ * Database using implementation of the ProductDao interface.
  */
 public class ProductDaoJdbc implements ProductDao {
     private static ProductDaoJdbc instance = null;
@@ -22,7 +22,7 @@ public class ProductDaoJdbc implements ProductDao {
     }
 
     public static void setPropertiesReader(String fileName) {
-       ProductDaoJdbc.propertiesReader = new PropertiesReader(fileName);
+        ProductDaoJdbc.propertiesReader = new PropertiesReader(fileName);
     }
 
     public static ProductDaoJdbc getInstance() {
@@ -32,6 +32,11 @@ public class ProductDaoJdbc implements ProductDao {
         return instance;
     }
 
+    /**
+     * * Adds a row into the database's product table. The data for this row is coming from the parameter Product object.
+     *
+     * @param product Product object
+     */
     public void add(Product product) {
         Connection connection = null;
 
@@ -65,6 +70,13 @@ public class ProductDaoJdbc implements ProductDao {
         }
     }
 
+    /**
+     * /**
+     * Finds a row by it's id (primary key) in the database's product table, and returns it as a Product object.
+     *
+     * @param id primary key field in the product table
+     * @return Product object
+     */
     public Product find(int id) {
         Connection connection = null;
         String query = "SELECT * FROM Product WHERE id = ?;";
@@ -105,6 +117,11 @@ public class ProductDaoJdbc implements ProductDao {
         return null;
     }
 
+    /**
+     * * Returns all rows in the product table.
+     *
+     * @return List containing Product objects.
+     */
     public List<Product> getAll() {
         Connection connection = null;
         List<Product> products = new ArrayList<>();
@@ -144,6 +161,11 @@ public class ProductDaoJdbc implements ProductDao {
         return products;
     }
 
+    /**
+     * Removes a row from the product table. The row is specified by the id parameter which is a primary key in the table.
+     *
+     * @param id id primary key field in the product table
+     */
     public void remove(int id) {
         Connection connection = null;
         try {
@@ -167,6 +189,13 @@ public class ProductDaoJdbc implements ProductDao {
         }
     }
 
+    /**
+     * Finds all products associated with the parameter Supplier object in the database.
+     *
+     * @param supplier Supplier object
+     * @return List of Product objects
+     */
+
     public List<Product> getBy(Supplier supplier) {
         Connection connection = null;
         List<Product> products = new ArrayList<>();
@@ -178,9 +207,9 @@ public class ProductDaoJdbc implements ProductDao {
                     propertiesReader.psw);
             PreparedStatement preparedStatement = connection.prepareStatement
                     ("SELECT * FROM Product WHERE supplier_id = ?;",
-                    ResultSet.TYPE_FORWARD_ONLY,
-                    ResultSet.CONCUR_READ_ONLY,
-                    ResultSet.CLOSE_CURSORS_AT_COMMIT);
+                            ResultSet.TYPE_FORWARD_ONLY,
+                            ResultSet.CONCUR_READ_ONLY,
+                            ResultSet.CLOSE_CURSORS_AT_COMMIT);
             preparedStatement.setInt(1, supplier.getId());
             ResultSet result = preparedStatement.executeQuery();
             while (result.next()) {
@@ -208,6 +237,12 @@ public class ProductDaoJdbc implements ProductDao {
         return products;
     }
 
+    /**
+     * Finds all products associated with the parameter ProducCategory object in the database.
+     *
+     * @param productCategory ProductCategory object
+     * @return List of Product objects
+     */
     public List<Product> getBy(ProductCategory productCategory) {
         Connection connection = null;
         List<Product> products = new ArrayList<>();
@@ -248,6 +283,13 @@ public class ProductDaoJdbc implements ProductDao {
         }
         return products;
     }
+
+    /**
+     * Deletes all rows from the product table. It only used for testing on the dummy database.
+     * <p>Truncates the table and restarts it's primary key. Also it runs as cascaded.
+     * You should never-ever use it on the primary database! You have been warned!</p>
+     */
+
     public void removeAll() {
 
         Connection connection = null;
@@ -270,9 +312,6 @@ public class ProductDaoJdbc implements ProductDao {
             }
         }
     }
-
-
-
 
 
 }

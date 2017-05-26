@@ -19,6 +19,13 @@ import spark.ModelAndView;
 import javax.persistence.Query;
 import java.util.*;
 
+/**
+ * This class is the actual user of the Database Access Objects.
+ * Collects all the required DAOs.
+ * It's responsible for the whole logic behind the webshop, and it's
+ * controls the flow of data between the user interface and the databse.
+ */
+
 public class ProductController {
 
     static ProductDao productDataStore = DaoFactory.createProductDao();
@@ -28,7 +35,10 @@ public class ProductController {
     static Map params = new HashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
-
+    /**
+     *Collects all the products from the database and displays them on the website.
+     * @return A Thymeleaf ModelAndView objects, the main page of the webshop.
+     */
     public static ModelAndView renderProducts(Request req, Response res) {
         if(!req.session().attributes().contains("order")) {
             req.session().attribute("order",OrderDaoMem.getInstance());
@@ -41,14 +51,27 @@ public class ProductController {
         return new ModelAndView(params, "product/index");
     }
 
+    /**
+     *Displays the webshop's user login page.
+     * @return A Thymeleaf ModelAndView objects, the user login page of the webshop.
+     */
     public static ModelAndView login(Request request,Response response){
         return new ModelAndView(params,"product/login");
     }
 
+    /**
+     *Displays the webshop's user registration page page.
+     * @return A Thymeleaf ModelAndView objects, the user registraion page of the webshop.
+     */
     public static ModelAndView register(Request request,Response response){
         return new ModelAndView(params,"product/register");
     }
 
+    /**
+     *Stores the registered user's data in the database.
+     * The password is hashed and salted before storing for security reasons.
+     * @return A Thymeleaf ModelAndView objects, the main page of the webshop.
+     */
     public static ModelAndView register_user(Request request, Response response,Session session){
         session.beginTransaction();
         User user=new User(request.queryParams("name"),request.queryParams("mail"),BCrypt.hashpw( request.queryParams("psw"), BCrypt.gensalt(10)));
@@ -58,6 +81,12 @@ public class ProductController {
         return new ProductController().renderProducts(request,response);
     }
 
+    /**
+     * Logs in the user to the webshop.
+     * It uses the user email for querying, but only logs in the user,
+     * when her password is authenticated.
+     * @return A Thymeleaf ModelAndView objects, the main page of the webshop.
+     */
     public static ModelAndView login_user(Request request, Response response, Session session){
         String input_name= request.queryParams("name");
         System.out.println(input_name);
@@ -73,7 +102,10 @@ public class ProductController {
         return new ProductController().login(request,response);
     }
 
-
+    /**
+     * Renders the cart of the user with the products placed in it.
+     * @return  A Thymeleaf ModelAndView objects, the cart view page of the webshop.
+     */
     public static ModelAndView renderCart(Request req, Response res){
         Map params= new HashMap<>();
         req.session().attribute("order");
@@ -94,7 +126,10 @@ public class ProductController {
             return new ModelAndView(params, "product/cart");
         }
     }
-
+    /**
+     * Deletes a line item from the user's cart.
+     * @return  A Thymeleaf ModelAndView objects, the cart view page of the webshop.
+     */
 
     public static ModelAndView deleteItem(Request req, Response res){
         String product_id=req.params(":id");
@@ -110,6 +145,11 @@ public class ProductController {
         return ProductController.renderCart(req,res);
     }
 
+    /**
+     * Edits the quantity of the line item.
+     * If the quantity drops to 0, then the line item is deleted entirely.
+     * @return  A Thymeleaf ModelAndView objects, the cart view page of the webshop.
+     */
     public static ModelAndView editItem(Request req, Response res){
         OrderDaoMem orderDaoMem = req.session().attribute("order");
         ProductDao productDaoMem = ProductDaoMem.getInstance();
@@ -136,7 +176,11 @@ public class ProductController {
         return ProductController.renderCart(req,res);
     }
 
-
+    /**
+     *Renders the products from the database, filtered by their category,
+     *  and displays them on the website.
+     * @return A Thymeleaf ModelAndView objects, the main page of the webshop.
+     */
     public static ModelAndView renderProductsByCategory(Request req, Response res) {
         int searchedId = Integer.parseInt(req.params(":id"));
 
@@ -144,6 +188,11 @@ public class ProductController {
         return new ModelAndView(params, "product/index");
     }
 
+    /**
+     * *Renders the products from the database, filtered by their supplier,
+     *  and displays them on the website.
+     * @return A Thymeleaf ModelAndView objects, the main page of the webshop.
+     */
     public static ModelAndView renderProductsBySupplier(Request req, Response res) {
         int searchedId = Integer.parseInt(req.params(":id"));
 
